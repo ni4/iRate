@@ -212,6 +212,7 @@ static NSString *const iRateMacAppStoreURLFormat = @"macappstore://itunes.apple.
         self.promptForNewVersionIfUserRated = NO;
         self.onlyPromptIfLatestVersion = YES;
         self.onlyPromptIfMainWindowIsAvailable = YES;
+        self.promptWithoutMainWindow = NO;
         self.promptAtLaunch = YES;
         self.usesUntilPrompt = 10;
         self.eventsUntilPrompt = 10;
@@ -922,26 +923,35 @@ static NSString *const iRateMacAppStoreURLFormat = @"macappstore://itunes.apple.
         
         self.visibleAlert = alert;
         
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < __MAC_10_9
         
-        if (![alert respondsToSelector:@selector(beginSheetModalForWindow:completionHandler:)])
+        if (self.promptWithoutMainWindow)
         {
-            [alert beginSheetModalForWindow:[NSApplication sharedApplication].mainWindow
-                              modalDelegate:self
-                             didEndSelector:@selector(alertDidEnd:returnCode:contextInfo:)
-                                contextInfo:nil];
+            NSInteger res = [alert runModal];
+            [self didDismissAlert:alert withButtonAtIndex:res - NSAlertFirstButtonReturn];
         }
         else
-        
-#endif
-        
         {
-            [alert beginSheetModalForWindow:[NSApplication sharedApplication].mainWindow completionHandler:^(NSModalResponse returnCode) {
-                [self didDismissAlert:alert withButtonAtIndex:returnCode - NSAlertFirstButtonReturn];
-            }];
-        }
-
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < __MAC_10_9
+            
+            if (![alert respondsToSelector:@selector(beginSheetModalForWindow:completionHandler:)])
+            {
+                [alert beginSheetModalForWindow:[NSApplication sharedApplication].mainWindow
+                                  modalDelegate:self
+                                 didEndSelector:@selector(alertDidEnd:returnCode:contextInfo:)
+                                    contextInfo:nil];
+            }
+            else
+                
 #endif
+                
+            {
+                [alert beginSheetModalForWindow:[NSApplication sharedApplication].mainWindow completionHandler:^(NSModalResponse returnCode) {
+                    [self didDismissAlert:alert withButtonAtIndex:returnCode - NSAlertFirstButtonReturn];
+                }];
+            }
+            
+#endif
+        }
 
         //inform about prompt
         [self.delegate iRateDidPromptForRating];

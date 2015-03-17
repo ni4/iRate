@@ -138,6 +138,7 @@ typedef NS_ENUM(NSUInteger, iRateErrorCode)
 @property (nonatomic, assign) BOOL promptForNewVersionIfUserRated;
 @property (nonatomic, assign) BOOL onlyPromptIfLatestVersion;
 @property (nonatomic, assign) BOOL onlyPromptIfMainWindowIsAvailable;
+@property (nonatomic, assign) BOOL promptWithoutMainWindow;
 @property (nonatomic, assign) BOOL promptAtLaunch;
 @property (nonatomic, assign) BOOL verboseLogging;
 @property (nonatomic, assign) BOOL previewMode;

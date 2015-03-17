@@ -26,6 +26,7 @@ Thread Safety
 --------------
 
 iRate uses threading internally to avoid blocking the UI, but none of the iRate external interfaces are thread safe and you should not call any methods or set any properties on iRate except from the main thread.
+Also you can manually make it blocking in case you don't use main window, see promptWithoutMainWindow property description.
 
 
 Installation
@@ -133,6 +134,10 @@ Set this to NO to enabled the rating prompt to be displayed even if the user is 
     @property (nonatomic, assign) BOOL onlyPromptIfMainWindowIsAvailable;
 
 This setting is applicable to Mac OS only. By default, on Mac OS the iRate alert is displayed as sheet on the main window. Some applications do not have a main window, so this approach doesn't work. For such applications, set this property to NO to allow the iRate alert to be displayed as a regular modal window.
+
+    @property (nonatomic, assign) BOOL promptWithoutMainWindow;
+
+This setting is applicable to Mac OS only. If your application doesn't have main window then iRate will display ordinary NSAlert, blocking the main thread. Default value is NO.
 
     @property (nonatomic, assign) BOOL promptAtLaunch;
 
